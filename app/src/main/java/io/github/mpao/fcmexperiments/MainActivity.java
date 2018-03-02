@@ -1,5 +1,9 @@
 package io.github.mpao.fcmexperiments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -26,6 +30,32 @@ public class MainActivity extends AppCompatActivity {
                 isEnabled = isChecked;
             }
         });
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver(new MyReceiver(), new IntentFilter("listenToThis"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(new MyReceiver());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            type.setText( intent.getStringExtra("type"));
+            message.setText( intent.getStringExtra("message") );
+        }
 
     }
 
